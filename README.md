@@ -1,6 +1,6 @@
 # terraform.io Kickstarter
 
-**terraform-kickstart* is an attempt to provide sets of easy to use 
+**terraform-kickstart** is an attempt to provide sets of easy to use 
 pre-defined configurations templates to use with 
 [terraform](https://www.terraform.io/).
 
