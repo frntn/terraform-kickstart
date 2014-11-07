@@ -43,3 +43,9 @@ See the README.md inside the `aws` folder for details on each network layout.
         └── infra.tf
 
 ```
+
+## VIM
+
+The hcl.vim highlight embedded string correctly...
+
+![Image: VIM custom HCL syntax highlight screenshot](https://raw.githubusercontent.com/frntn/terraform-kickstart/master/vim-highlight-result.png)

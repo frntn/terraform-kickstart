@@ -1,5 +1,9 @@
-variable "tagname" { default = "(template) pub2" }
-variable "region" { default = "eu-west-1" }
+variable "tagname" { 
+  default = "(template) pub2" 
+}
+variable "region" { 
+  default = "eu-west-1" 
+}
 
                         #######
                         # AWS #
