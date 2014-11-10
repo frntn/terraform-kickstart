@@ -53,17 +53,17 @@ redundancy for your databases (private networks)*
 You may need to consider the following limitations as terraform is an excellent
 tool in active development but still in 0.3.1...
 
-#### DependencyViolation error while destroying with rebound server
+#### DependencyViolation error while destroying with bastion server
 
-On both `pub1-priv1` and `pub2-priv2` layouts, you'll find a `rebond` section.
+On both `pub1-priv1` and `pub2-priv2` layouts, you'll find a `bastion` section.
 It should be used to access the machines inside the private subnet. It's also 
-a good practice to use this kind of unique rebond server (the only entry point 
+a good practice to use this kind of unique bastion server (the only entry point 
 with security focus) for `pub1` and `pub2` subnets.
 
 By default this section is commented out because you may want to change the 
 `ami` and `instance_type`.
 
-**If you use this rebond server, you'll have to first remove it (comment
+**If you use this bastion server, you'll have to first remove it (comment
 back this section then `terraform apply`) before being able to destroy the 
 whole layout (`terraform destroy`) without any error (`DependencyViolation`).**
 

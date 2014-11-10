@@ -48,4 +48,8 @@ See the README.md inside the `aws` folder for details on each network layout.
 
 The hcl.vim highlight nested string correctly...
 
+```
+  mv hcl.vim /usr/share/vim/vimcurrent/syntax/
+```
+
 ![Image: VIM custom HCL syntax highlight screenshot](https://raw.githubusercontent.com/frntn/terraform-kickstart/master/vim-highlight-result.png)

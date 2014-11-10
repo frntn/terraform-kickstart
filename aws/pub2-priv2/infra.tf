@@ -94,12 +94,12 @@ resource "aws_route_table_association" "public-c" {
   route_table_id = "${aws_route_table.route-to-gw.id}"  
 }
 
-## REBOND ==================================================
+## BASTION ==================================================
 #
 #variable "keyname" {}
 #
-#resource "aws_security_group" "rebond" {
-#  name = "rebond"
+#resource "aws_security_group" "bastion" {
+#  name = "bastion"
 #  description = "allow all inbound traffic"
 #
 #  vpc_id = "${aws_vpc.internal.id}"
@@ -114,16 +114,16 @@ resource "aws_route_table_association" "public-c" {
 #  }
 #}
 #
-#resource "aws_instance" "rebond" {
+#resource "aws_instance" "bastion" {
 #  ami = "ami-f0b11187"
 #  instance_type = "t2.micro"
 #  key_name = "${var.keyname}"
 #  subnet_id = "${aws_subnet.public-b.id}"
-#  security_groups = ["${aws_security_group.rebond.id}"]
+#  security_groups = ["${aws_security_group.bastion.id}"]
 #  associate_public_ip_address = true
 #
 #  tags {
-#    Name = "rebond"
+#    Name = "bastion"
 #  }
 #
 #}
