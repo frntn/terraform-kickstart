@@ -31,7 +31,6 @@ resource "aws_instance" "web-front" {
   tags {
     Name = "web-front"
   }
-
 }
 
 # BACKEND ---------------------------------------------------------------------
@@ -65,6 +64,5 @@ resource "aws_instance" "web-back" {
   tags {
     Name = "web-back"
   }
-
 }
 

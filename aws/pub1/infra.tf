@@ -1,14 +1,3 @@
-variable "tagname" { 
-  default = "(template) pub1" 
-}
-variable "region" { 
-  default = "eu-west-1" 
-}
-
-                        #######
-                        # AWS #
-                        #######
-
 provider "aws" {
   access_key = "${file(concat(path.root,"/../access_key"))}"
   secret_key = "${file(concat(path.root,"/../secret_key"))}"
@@ -21,7 +10,7 @@ resource "aws_vpc" "internal" {
   cidr_block = "10.10.0.0/16"
 
   tags {
-    Name = "${var.tagname}"
+    Name = "${var.tagprefix} pub1"
   }
 }
 
@@ -34,7 +23,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "${var.tagname}"
+    Name = "${var.tagprefix} pub1a"
   }
 }
 

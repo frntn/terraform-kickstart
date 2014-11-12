@@ -31,7 +31,6 @@ resource "aws_instance" "web-front-b" {
   tags {
     Name = "web-front-b"
   }
-
 }
 
 resource "aws_instance" "web-front-c" {
@@ -47,7 +46,6 @@ resource "aws_instance" "web-front-c" {
   tags {
     Name = "web-front-c"
   }
-
 }
 
 # BACKEND ---------------------------------------------------------------------
@@ -81,7 +79,6 @@ resource "aws_instance" "web-back-b" {
   tags {
     Name = "web-back-b"
   }
-
 }
 
 resource "aws_instance" "web-back-c" {
@@ -95,8 +92,6 @@ resource "aws_instance" "web-back-c" {
   ]
 
   tags {
-    Name = "web-back-b"
+    Name = "web-back-c"
   }
-
 }
-

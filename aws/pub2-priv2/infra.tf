@@ -1,12 +1,3 @@
-variable "keyname" {}
-variable "my_cidr_block" { default = "0.0.0.0/0" }
-variable "tagname" { default = "(template) pub2-priv2" }
-variable "region" { default = "eu-west-1" }
-
-                        #######
-                        # AWS #
-                        #######
-
 provider "aws" {
   access_key = "${file(concat(path.root,"/../access_key"))}"
   secret_key = "${file(concat(path.root,"/../secret_key"))}"
@@ -19,7 +10,7 @@ resource "aws_vpc" "internal" {
   cidr_block = "10.10.0.0/16"
 
   tags {
-    Name = "${var.tagname}"
+    Name = "${var.tagprefix} pub2-priv2"
   }
 }
 
@@ -31,7 +22,7 @@ resource "aws_subnet" "private-b" {
   availability_zone = "${var.region}b"
 
   tags {
-    Name = "priv2b"
+    Name = "${var.tagprefix} priv2b"
   }
 }
 
@@ -41,7 +32,7 @@ resource "aws_subnet" "private-c" {
   availability_zone = "${var.region}c"
 
   tags {
-    Name = "priv2c"
+    Name = "${var.tagprefix} priv2c"
   }
 }
 
@@ -54,7 +45,7 @@ resource "aws_subnet" "public-b" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "pub2b"
+    Name = "${var.tagprefix} pub2b"
   }
 }
 
@@ -65,7 +56,7 @@ resource "aws_subnet" "public-c" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "pub2c"
+    Name = "${var.tagprefix} pub2c"
   }
 }
 
@@ -136,7 +127,7 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
 
   tags {
-    Name = "bastion"
+    Name = "${var.tagprefix} bastion"
   }
 
 }
@@ -195,7 +186,7 @@ resource "aws_instance" "nat" {
   source_dest_check = false
 
   tags {
-    Name = "nat"
+    Name = "${var.tagprefix} nat"
   }
 
 }
