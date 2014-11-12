@@ -18,8 +18,10 @@ syn region hclSmartString display oneline start='"' end='"\s*$' contains=hclInte
 " --- HCL GENERIC ---
 
 syn keyword hclRootKeywords variable provider resource nextgroup=hclString,hclString skipwhite
+syn keyword hclRootKeywords default nextgroup=hclEquals skipwhite
 
 " --- HCL SPECIFIC : AWS PROVIDER ---
+" Auto generated from terraform.io website sources
 
 " autoscale
 syn keyword hclAwsResourcesKeywords availability_zones desired_capacity force_delete health_check_grace_period health_check_type launch_configuration load_balancers max_size min_size name vpc_zone_identifier nextgroup=hclEquals,hclString skipwhite
