@@ -1,9 +1,7 @@
-variable "tagname" { 
-  default = "(template) pub1-priv1" 
-}
-variable "region" { 
-  default = "eu-west-1" 
-}
+variable "keyname" {}
+variable "my_cidr_black" { default = "0.0.0.0/0" }
+variable "tagname" { default = "(template) pub1-priv1" }
+variable "region" { default = "eu-west-1" }
 
                         #######
                         # AWS #
@@ -15,7 +13,7 @@ provider "aws" {
   region     = "${var.region}"
 }
 
-## VPC =====================================================
+## VPC ========================================================================
 
 resource "aws_vpc" "internal" {
   cidr_block = "10.10.0.0/16"
@@ -25,11 +23,11 @@ resource "aws_vpc" "internal" {
   }
 }
 
-## Subnet (private) ======================================
+## Subnet (private) ===========================================================
 
 resource "aws_subnet" "private" {
   vpc_id = "${aws_vpc.internal.id}"
-  cidr_block = "10.10.0.0/18"
+  cidr_block = "10.10.0.0/17"
   availability_zone = "${var.region}a"
 
   tags {
@@ -37,11 +35,11 @@ resource "aws_subnet" "private" {
   }
 }
 
-## Subnet (public) =======================================
+## Subnet (public) ============================================================
 
 resource "aws_subnet" "public" {
   vpc_id = "${aws_vpc.internal.id}"
-  cidr_block = "10.10.128.0/18"
+  cidr_block = "10.10.128.0/17"
   availability_zone = "${var.region}a"
   map_public_ip_on_launch = true
 
@@ -67,36 +65,106 @@ resource "aws_route_table_association" "public" {
   route_table_id = "${aws_route_table.route-to-gw.id}"  
 }
 
-## BASTION ==================================================
-#
-#variable "keyname" {}
-#
-#resource "aws_security_group" "bastion" {
-#  name = "bastion"
-#  description = "allow all inbound traffic"
-#
-#  vpc_id = "${aws_vpc.internal.id}"
-#
-#  ingress {
-#    from_port = 0
-#    to_port = 65535
-#    protocol = "TCP"
-#    cidr_blocks = [
-#      "WWW.XXX.YYY.ZZZ/32" # You IP goes here
-#    ]
-#  }
-#}
-#
-#resource "aws_instance" "bastion" {
-#  ami = "ami-f0b11187"
-#  instance_type = "t2.micro"
-#  key_name = "${var.keyname}"
-#  subnet_id = "${aws_subnet.public.id}"
-#  security_groups = ["${aws_security_group.bastion.id}"]
-#  associate_public_ip_address = true
-#
-#  tags {
-#    Name = "bastion"
-#  }
-#
-#}
+## BASTION instance (public) ==================================================
+
+resource "aws_security_group" "ssh-to-bastion" {
+  name = "ssh-to-bastion"
+  description = "allow all inbound traffic to bastion"
+
+  vpc_id = "${aws_vpc.internal.id}"
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "TCP"
+    cidr_blocks = [
+      "${var.my_cidr_block}"
+    ]
+  }
+}
+
+resource "aws_security_group" "ssh-from-bastion" {
+  name = "ssh-from-bastion"
+  description = "allow ssh inbound traffic from bastion"
+
+  vpc_id = "${aws_vpc.internal.id}"
+
+  ingress {
+    from_port = 22
+    to_port = 22
+    protocol = "TCP"
+    cidr_blocks = [
+      "${aws_instance.bastion.private_ip}/32"
+    ]
+  }
+}
+
+resource "aws_instance" "bastion" {
+  ami = "ami-f0b11187"
+  instance_type = "t2.micro"
+  key_name = "${var.keyname}"
+  subnet_id = "${aws_subnet.public.id}"
+  security_groups = [
+    "${aws_security_group.ssh-to-bastion.id}"
+  ]
+  associate_public_ip_address = true
+
+  tags {
+    Name = "bastion"
+  }
+
+}
+
+## NAT instance (public) =====================================================
+
+resource "aws_security_group" "nat-http-from-privatesubnet" {
+  name = "nat-http-from-privatesubnet"
+  description = "allow internet access from private subnet"
+
+  vpc_id = "${aws_vpc.internal.id}"
+
+  ingress {
+    from_port = 80
+    to_port = 80
+    protocol = "TCP"
+    cidr_blocks = [
+      "${aws_subnet.private.cidr_block}"
+    ]
+  }
+}
+
+resource "aws_route_table" "route-to-nat" {
+  vpc_id = "${aws_vpc.internal.id}"
+  route {
+    cidr_block = "0.0.0.0/0"
+    instance_id = "${aws_instance.nat.id}"
+  }
+}
+
+resource "aws_route_table_association" "private" {
+  subnet_id = "${aws_subnet.private.id}"
+  route_table_id = "${aws_route_table.route-to-nat.id}"  
+}
+
+resource "aws_instance" "nat" {
+  # This HVM instance doesn't work :
+  #ami = "ami-892fe1fe"
+  #instance_type = "t2.micro"
+
+  # Using PV instance instead :
+  ami = "ami-ed352799"
+  instance_type = "t1.micro"
+  key_name = "${var.keyname}"
+  subnet_id = "${aws_subnet.public.id}"
+  security_groups = [
+    "${aws_security_group.nat-http-from-privatesubnet.id}"
+  ]
+  associate_public_ip_address = true
+  source_dest_check = false
+
+  tags {
+    Name = "nat"
+  }
+
+}
+
