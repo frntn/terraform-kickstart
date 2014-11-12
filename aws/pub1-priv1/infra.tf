@@ -7,7 +7,7 @@ provider "aws" {
 ## VPC ========================================================================
 
 resource "aws_vpc" "internal" {
-  cidr_block = "10.10.0.0/16"
+  cidr_block = "10.11.0.0/16"
 
   tags {
     Name = "${var.tagprefix} pub1-priv1"
@@ -18,7 +18,7 @@ resource "aws_vpc" "internal" {
 
 resource "aws_subnet" "private" {
   vpc_id = "${aws_vpc.internal.id}"
-  cidr_block = "10.10.0.0/17"
+  cidr_block = "10.11.0.0/17"
   availability_zone = "${var.region}a"
 
   tags {
@@ -30,7 +30,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_subnet" "public" {
   vpc_id = "${aws_vpc.internal.id}"
-  cidr_block = "10.10.128.0/17"
+  cidr_block = "10.11.128.0/17"
   availability_zone = "${var.region}a"
   map_public_ip_on_launch = true
 
