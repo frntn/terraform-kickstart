@@ -1,3 +1,5 @@
+[ ![Codeship Status for frntn/terraform-kickstart](https://codeship.com/projects/d93f68b0-5162-0132-afdb-7262abc25231/status)](https://codeship.com/projects/48331)
+
 # terraform.io Kickstarter
 
 **terraform-kickstart** is an attempt to provide sets of easy to use 
